@@ -8,7 +8,7 @@ import useSWR from 'swr';
 
 const Login = () => {
   const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
-    dedupingInterval: 100000, // 주기적으로 호출되지만 dedupingInterval 기간 동안은 캐시에서 불러온다.
+    dedupingInterval: 100000, // 주기적으로 호출되지만 dedupingInterval 기간 동안은 캐시에서 불러온다. 캐시 유지기간
   });
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
@@ -21,9 +21,9 @@ const Login = () => {
       setLogInError(false);
       axios
         .post('http://localhost:3095/api/users/login', { email, password }, { withCredentials: true })
-        .then(() => {
+        .then((response) => {
           // 성공시 실행
-          mutate();
+          mutate(response.data, false); // 데이터를 보내기 전에 미리 UI를 실행해서 딜레이가 없도록 느끼게한다.
         })
         .catch((err) => {
           // 실패시 실행
