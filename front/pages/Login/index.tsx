@@ -1,26 +1,29 @@
 import useInput from '@hooks/useinput';
-import { Header, Form, Label, Input, LinkContainer, Button, Error } from '@pages/Login/style';
+import { Header, Form, Label, Input, LinkContainer, Button, Error } from '@pages/SignUp/style';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import useSWR from 'swr';
 
 const Login = () => {
-  const { data, error } = useSWR('/api/users', fetcher);
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 100000, // 주기적으로 호출되지만 dedupingInterval 기간 동안은 캐시에서 불러온다.
+  });
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
 
-  /** 회원가입 버튼 클릭시 이벤트 */
+  /** 로그인 버튼 클릭시 이벤트 */
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
       setLogInError(false);
       axios
-        .post('/api/users/login', { email, password }, { withCredentials: true })
+        .post('http://localhost:3095/api/users/login', { email, password }, { withCredentials: true })
         .then(() => {
           // 성공시 실행
+          mutate();
         })
         .catch((err) => {
           // 실패시 실행
@@ -30,8 +33,19 @@ const Login = () => {
           // 성공하든 실패하든 공통으로 실행할 것
         });
     },
-    [email, password],
+    [email, password, mutate],
   );
+
+  // 유저 정보를 확인하기 전에 먼저 페이지를 띄워주지 않게
+  if (data === undefined) {
+    return <div>페이지 로드중</div>;
+  }
+
+  // 유저 정보가 성공적으로 수신(get)되면 channel로 이동
+  if (!error && data) {
+    console.log('로그인', data);
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">

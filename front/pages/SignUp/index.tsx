@@ -2,9 +2,12 @@ import React, { useCallback, useState } from 'react';
 import { Header, Form, Label, Input, LinkContainer, Button, Error, Success } from '@pages/SignUp/style';
 import useInput from '@hooks/useinput';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
+import fetcher from '@utils/fetcher';
+import useSWR from 'swr';
 
 const SignUp = () => {
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, , setPassword] = useInput('');
@@ -41,7 +44,7 @@ const SignUp = () => {
         setSignUpError('');
         setSignUpSucess(false);
         axios
-          .post('/api/users', { email, nickname, password })
+          .post('http://localhost:3095/api/users', { email, nickname, password })
           .then((response) => {
             // 성공시 실행
             console.log(response);
@@ -59,6 +62,17 @@ const SignUp = () => {
     },
     [email, nickname, password, passwordCheck],
   );
+
+  // 유저 정보를 확인하기 전에 먼저 페이지를 띄워주지 않게
+  if (data === undefined) {
+    return <div>페이지 로드중</div>;
+  }
+
+  // 유저 정보가 있다면 channel로 이동
+  if (data) {
+    console.log('로그인', data);
+    return <Redirect to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">
