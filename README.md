@@ -41,3 +41,7 @@
 #### SWR 의도치 않은 호출 막기
 
 - dedupingInterval : 주기적으로 호출은 되지만 dedupingInterval 기간 내에는 캐시에서 불러온다.
+
+### GRAVATAR
+
+- 랜덤 아바타 이미지 생성
