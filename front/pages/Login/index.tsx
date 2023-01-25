@@ -44,7 +44,7 @@ const Login = () => {
   // 유저 정보가 성공적으로 수신(get)되면 channel로 이동
   if (!error && data) {
     console.log('로그인', data);
-    return <Redirect to="/workspace/channel" />;
+    return <Redirect to="/workspace/sleact/channel/일반" />;
   }
 
   return (
