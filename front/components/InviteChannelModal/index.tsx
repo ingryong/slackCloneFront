@@ -1,7 +1,7 @@
 import Modal from '@components/Modal';
 import useInput from '@hooks/useinput';
 import { Button, Input, Label } from '@pages/SignUp/style';
-import { IChannel, IUser } from '@typings/db';
+import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { FC, useCallback, VFC } from 'react';
@@ -14,13 +14,12 @@ interface Props {
   onCloseModal: () => void;
   setShowInviteChannelModal: (flag: boolean) => void;
 }
-const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteChannelModal }) => {
-  const params = useParams<{ workspace?: string }>();
-  const { workspace } = params;
+const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChannelModal }) => {
+  const { workspace, channel } = useParams<{ workspace?: string; channel: string }>();
   const [newMember, onChangeNewMember, setNewMember] = useInput('');
   const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
-  const { mutate: revalidateInviteChannel } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+  const { mutate: revalidateMembers } = useSWR<IUser[]>(
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
 
@@ -31,12 +30,12 @@ const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteChan
         return;
       }
       axios
-        .post(`http://localhost:3095/api/workspaces/${workspace}/members`, {
+        .post(`http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members`, {
           email: newMember,
         })
         .then(() => {
           setShowInviteChannelModal(false);
-          revalidateInviteChannel();
+          revalidateMembers();
           setNewMember('');
         })
         .catch((error) => {
@@ -44,7 +43,7 @@ const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteChan
           toast.error(error.response?.data, { position: 'bottom-center' });
         });
     },
-    [workspace, newMember],
+    [workspace, newMember, channel, revalidateMembers, setNewMember, setShowInviteChannelModal],
   );
 
   return (
@@ -60,4 +59,4 @@ const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteChan
   );
 };
 
-export default InviteWorkSpaceModal;
+export default InviteChannelModal;

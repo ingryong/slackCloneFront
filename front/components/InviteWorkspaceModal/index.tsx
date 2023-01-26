@@ -1,7 +1,7 @@
 import Modal from '@components/Modal';
 import useInput from '@hooks/useinput';
 import { Button, Input, Label } from '@pages/SignUp/style';
-import { IChannel, IUser } from '@typings/db';
+import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import React, { FC, useCallback, VFC } from 'react';
@@ -15,12 +15,11 @@ interface Props {
   setShowInviteWorkspaceModal: (flag: boolean) => void;
 }
 const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWorkspaceModal }) => {
-  const params = useParams<{ workspace?: string }>();
-  const { workspace } = params;
+  const { workspace } = useParams<{ workspace?: string; channel: string }>();
   const [newMember, onChangeNewMember, setNewMember] = useInput('');
   const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
-  const { mutate: revalidateInviteWorkspace } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+  const { mutate: revalidateMembers } = useSWR<IUser[]>(
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/members` : null,
     fetcher,
   );
 
@@ -36,7 +35,7 @@ const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
         })
         .then(() => {
           setShowInviteWorkspaceModal(false);
-          revalidateInviteWorkspace();
+          revalidateMembers();
           setNewMember('');
         })
         .catch((error) => {
@@ -44,7 +43,7 @@ const InviteWorkSpaceModal: FC<Props> = ({ show, onCloseModal, setShowInviteWork
           toast.error(error.response?.data, { position: 'bottom-center' });
         });
     },
-    [workspace, newMember],
+    [workspace, newMember, revalidateMembers, setShowInviteWorkspaceModal, setNewMember],
   );
 
   return (
