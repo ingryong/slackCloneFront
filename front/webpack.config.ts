@@ -82,13 +82,14 @@ const config: webpack.Configuration = {
     port: 3090,
     devMiddleware: { publicPath: '/dist/' },
     static: { directory: path.resolve(__dirname) },
-    // proxy: {
-    //   // CORS Error 프론트에서 해결방법. 백엔드 서버와 프론트엔드 서버의 주소가 서로 다르다면 사용할 수 없다.
-    //   '/api': {
-    //     target: 'http://localhost:3095',
-    //     changeOrigin: true,
-    //   },
-    // },
+    proxy: {
+      // CORS Error 프론트에서 해결방법. 백엔드 서버와 프론트엔드 서버의 주소가 서로 다르다면 사용할 수 없다.
+      '/api/': {
+        target: 'http://localhost:3095',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
   },
 };
 

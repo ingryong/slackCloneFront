@@ -31,6 +31,8 @@ import Modal from '@components/Modal';
 import CreateChannelModal from '@components/CreateChannelModal';
 import InviteWorkSpaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal';
+import DMList from '@components/DMList';
+import ChannelList from '@components/ChannelList';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -48,26 +50,24 @@ const Workspace: VFC = () => {
 
   const { workspace } = useParams<{ workspace: string }>();
   // 유저 데이터
-  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
-    dedupingInterval: 2000,
-  });
+  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher);
   // 채널 데이터
-  const { data: channelData } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
-    fetcher,
-  );
+  const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
   // 멤버 데이터
-  const { data: memberData } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/members` : null,
-    fetcher,
-  );
+  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   /** 로그아웃 이벤트 */
   const onLogout = useCallback(() => {
-    axios.post('http://localhost:3095/api/users/logout', null, { withCredentials: true }).then(() => {
-      revalidateUser(false, false);
-    });
+    axios
+      .post('/api/users/logout')
+      .then(() => {
+        revalidateUser();
+      })
+      .catch((error) => {
+        console.dir(error);
+        toast.error(error.response?.data, { position: 'bottom-center' });
+      });
   }, []);
 
   /** 상단바 프로필이미지 토글메뉴 버튼 */
@@ -95,7 +95,7 @@ const Workspace: VFC = () => {
       if (!newUrl || !newUrl.trim()) return;
       axios
         .post(
-          'http://localhost:3095/api/workspaces',
+          '/api/workspaces',
           {
             // API.md의 POST /workspaces
             workspace: newWorkspace,
@@ -138,7 +138,9 @@ const Workspace: VFC = () => {
   }, []);
 
   /** 워크스페이스 토글 - 채널 초대하기 */
-  const onClickInviteWorkspace = useCallback(() => {}, []);
+  const onClickInviteWorkspace = useCallback(() => {
+    setShowInviteWorkspaceModal(true);
+  }, []);
 
   if (!userData) {
     return <Redirect to="/login" />;
@@ -170,6 +172,7 @@ const Workspace: VFC = () => {
         </RightMenu>
       </Header>
       <WorkspaceWrapper>
+        {/** 워크스페이스 리스트 */}
         <Workspaces>
           {userData?.Workspaces?.map((ws) => {
             return (
@@ -180,6 +183,7 @@ const Workspace: VFC = () => {
           })}
           <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
         </Workspaces>
+        {/** 채널 리스트 */}
         <Channels>
           <WorkspaceName onClick={toggleWorkspaceModal}>Sleact</WorkspaceName>
           <MenuScroll>
@@ -191,12 +195,13 @@ const Workspace: VFC = () => {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
-            {channelData?.map((v) => (
-              <div>{v.name}</div>
-            ))}
+            {/** 채널리스트 / DM리스트 */}
+            <ChannelList />
+            <DMList />
           </MenuScroll>
           <AddButton>addButton</AddButton>
         </Channels>
+        {/** 채팅 섹션 */}
         <Chats>
           <Switch>
             <Route path="/workspace/:workspace/channel/:channel" component={Channel} />
@@ -204,6 +209,8 @@ const Workspace: VFC = () => {
           </Switch>
         </Chats>
       </WorkspaceWrapper>
+
+      {/** 워크스페이스 생성 모달 */}
       <Modal show={showCreateWorkspaceModal} onCloseModal={onCloseModal}>
         <form onSubmit={onCreateWorkspace}>
           <Label id="workspace-label">
@@ -217,16 +224,22 @@ const Workspace: VFC = () => {
           <Button type="submit">생성하기</Button>
         </form>
       </Modal>
+
+      {/** 채널 생성 모달 */}
       <CreateChannelModal
         show={showCreateChannelModal}
         onCloseModal={onCloseModal}
         setShowCreateChannelModal={setShowCreateChannelModal}
       />
+
+      {/** 워크스페이스 멤버 초대 모달 */}
       <InviteWorkSpaceModal
         show={showInviteWorkspaceModal}
         onCloseModal={onCloseModal}
         setShowInviteWorkspaceModal={setShowInviteWorkspaceModal}
       />
+
+      {/** 채널 멤버 초대 모달 */}
       <InviteChannelModal
         show={showInviteChannelModal}
         onCloseModal={onCloseModal}
