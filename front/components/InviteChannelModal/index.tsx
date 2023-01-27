@@ -1,10 +1,10 @@
 import Modal from '@components/Modal';
-import useInput from '@hooks/useinput';
-import { Button, Input, Label } from '@pages/SignUp/style';
+import useInput from '@hooks/useInput';
+import { Button, Input, Label } from '@pages/SignUp/styles';
 import { IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
-import React, { FC, useCallback, VFC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
@@ -15,9 +15,9 @@ interface Props {
   setShowInviteChannelModal: (flag: boolean) => void;
 }
 const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChannelModal }) => {
-  const { workspace, channel } = useParams<{ workspace?: string; channel: string }>();
+  const { workspace, channel } = useParams<{ workspace: string; channel: string }>();
   const [newMember, onChangeNewMember, setNewMember] = useInput('');
-  const { data: userData } = useSWR<IUser | false>('/api/users', fetcher);
+  const { data: userData } = useSWR<IUser>('/api/users', fetcher);
   const { mutate: revalidateMembers } = useSWR<IUser[]>(
     userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
@@ -34,8 +34,8 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
           email: newMember,
         })
         .then(() => {
-          setShowInviteChannelModal(false);
           revalidateMembers();
+          setShowInviteChannelModal(false);
           setNewMember('');
         })
         .catch((error) => {
@@ -43,15 +43,15 @@ const InviteChannelModal: FC<Props> = ({ show, onCloseModal, setShowInviteChanne
           toast.error(error.response?.data, { position: 'bottom-center' });
         });
     },
-    [workspace, newMember, channel, revalidateMembers, setNewMember, setShowInviteChannelModal],
+    [channel, newMember, revalidateMembers, setNewMember, setShowInviteChannelModal, workspace],
   );
 
   return (
     <Modal show={show} onCloseModal={onCloseModal}>
       <form onSubmit={onInviteMember}>
         <Label id="member-label">
-          <span>이메일</span>
-          <Input id="member" type="email" value={newMember} onChange={onChangeNewMember} />
+          <span>채널 멤버 초대</span>
+          <Input id="member" value={newMember} onChange={onChangeNewMember} />
         </Label>
         <Button type="submit">초대하기</Button>
       </form>

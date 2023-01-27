@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
-const useInput = <T = any>(initialData: T): [T, (e: any) => void, Dispatch<SetStateAction<T>>] => {
-  const [value, setValue] = useState(initialData);
+type Handler = (e: any) => void;
+type ReturnTypes<T = any> = [T, Handler, Dispatch<SetStateAction<T>>];
+const useInput = <T = any>(initialValue: T): ReturnTypes<T> => {
+  const [value, setValue] = useState(initialValue);
   const handler = useCallback((e) => {
     setValue(e.target.value);
   }, []);
-
   return [value, handler, setValue];
 };
 

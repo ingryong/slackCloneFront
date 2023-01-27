@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { Header, Form, Label, Input, LinkContainer, Button, Error, Success } from '@pages/SignUp/style';
-import useInput from '@hooks/useinput';
+import { Header, Form, Label, Input, LinkContainer, Button, Error, Success } from '@pages/SignUp/styles';
+import useInput from '@hooks/useInput';
 import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import fetcher from '@utils/fetcher';

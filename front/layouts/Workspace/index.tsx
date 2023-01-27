@@ -25,8 +25,8 @@ import { toast } from 'react-toastify';
 import loadable from '@loadable/component';
 import Menu from '@components/Menu';
 import { Link } from 'react-router-dom';
-import { Button, Input, Label } from '@pages/SignUp/style';
-import useInput from '@hooks/useinput';
+import { Button, Input, Label } from '@pages/SignUp/styles';
+import useInput from '@hooks/useInput';
 import Modal from '@components/Modal';
 import CreateChannelModal from '@components/CreateChannelModal';
 import InviteWorkSpaceModal from '@components/InviteWorkspaceModal';
@@ -58,7 +58,7 @@ const Workspace: VFC = () => {
   const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   /** 로그아웃 이벤트 */
-  const onLogout = useCallback(() => {
+  const onLogOut = useCallback(() => {
     axios
       .post('/api/users/logout')
       .then(() => {
@@ -165,7 +165,7 @@ const Workspace: VFC = () => {
                     <span id="profile-active">Active</span>
                   </div>
                 </ProfileModal>
-                <LogOutButton onClick={onLogout}>로그아웃</LogOutButton>
+                <LogOutButton onClick={onLogOut}>로그아웃</LogOutButton>
               </Menu>
             )}
           </span>
@@ -192,7 +192,7 @@ const Workspace: VFC = () => {
                 <h2>메뉴</h2>
                 <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>
                 <button onClick={onClickAddChannel}>채널 만들기</button>
-                <button onClick={onLogout}>로그아웃</button>
+                <button onClick={onLogOut}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
             {/** 채널리스트 / DM리스트 */}
