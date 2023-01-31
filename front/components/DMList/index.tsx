@@ -1,4 +1,5 @@
 import EachDM from '@components/EachDM';
+import useSocket from '@hooks/useSocket';
 import { IUser, IUserWithOnline } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -17,7 +18,7 @@ const DMList = () => {
     fetcher,
   );
 
-  // const [socket] = useSocket(workspace);
+  const [socket] = useSocket(workspace);
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [onlineList, setOnliseList] = useState<number[]>([]);
 
@@ -30,16 +31,17 @@ const DMList = () => {
     setOnliseList([]);
   }, [workspace]);
 
-  //   useEffect(() => {
-  //     socket?.on('onlineList', (data: number[]) => {
-  //       setOnliseList(data);
-  //     });
-  //     console.log('socket on dm', socket?.hasListeners('dm'), socket);
-  //     return () => {
-  //       console.log('socket off dm', socket?.hasListeners('dm'));
-  //       socket?.off('onlineList');
-  //     };
-  //   }, [socket]);
+  // 온라인시 불들어옴
+    useEffect(() => {
+      socket?.on('onlineList', (data: number[]) => {
+        setOnliseList(data);
+      });
+      console.log('socket on dm', socket?.hasListeners('dm'), socket);
+      return () => {
+        console.log('socket off dm', socket?.hasListeners('dm'));
+        socket?.off('onlineList');
+      };
+    }, [socket]);
 
   return (
     <>

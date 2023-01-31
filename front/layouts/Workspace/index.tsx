@@ -33,6 +33,7 @@ import InviteWorkSpaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal';
 import DMList from '@components/DMList';
 import ChannelList from '@components/ChannelList';
+import useSocket from '@hooks/useSocket';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -58,6 +59,22 @@ const Workspace: VFC = () => {
 
   // 멤버 데이터
   const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+
+  const[socket, disconnect] = useSocket();
+
+  // 연결될 때
+  useEffect(()=>{
+    if(channelData && userData&&socket){
+      socket.emit('login',{id:userData.id, channels:channelData.map((v)=>v.id)})
+    }
+  },[socket, channelData, userData])
+
+  // 연결 끊을 때
+  useEffect(()=>{
+    return () =>{
+      disconnect();
+    }
+  },[workspace, disconnect])
 
   /** 로그아웃 이벤트 */
   const onLogOut = useCallback(() => {
