@@ -53,3 +53,8 @@
 ### autosize
 
 - textArea에서 작성된 텍스트들의 줄이 길어지면 맞춰서 같이 길어지고 짧아진다
+
+### eslint-config-react-app / eslint-plugin-flowtype / eslint-plugin-import / eslint-plugin-jsx-a11y / eslint-plugin-react
+
+- useCallback에서 deps([])를 빼먹었을 때 경고를 나타내준다.
+- 완벽하진 않으며 외부에서 끌어와 쓰이는 것들에 대해서는 알려준다.

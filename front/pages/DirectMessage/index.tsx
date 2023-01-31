@@ -7,6 +7,8 @@ import { useParams } from 'react-router';
 import ChatBox from '@components/ChatBox';
 import ChatList from '@components/ChatList';
 import useInput from '@hooks/useInput';
+import axios from 'axios';
+import { IDM } from '@typings/db';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -14,12 +16,32 @@ const DirectMessage = () => {
   const { data: myData } = useSWR('/api/users', fetcher);
   const [chat, onChangeChat, setChat] = useInput('');
 
+  // 등록된 채팅 받아오기
+  const { data: chatData, mutate: mutateChat } = useSWR<IDM[]>(
+    `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=1`,
+    fetcher,
+  );
+
   // 작성된 내용 submit
-  const onSubmitForm = useCallback((e) => {
-    e.preventDefault();
-    console.log('submit');
-    setChat('');
-  }, []);
+  const onSubmitForm = useCallback(
+    (e) => {
+      e.preventDefault();
+      // chat이 있을 때 채팅을 등록한다.
+      if (chat?.trim()) {
+        console.log('chat');
+        axios
+          .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
+            content: chat,
+          })
+          .then(() => {
+            mutateChat;
+            setChat('');
+          })
+          .catch(console.error);
+      }
+    },
+    [chat],
+  );
 
   if (!userData || !myData) {
     return null;

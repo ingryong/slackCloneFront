@@ -19,14 +19,17 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) 
   }, []);
 
   // 엔터 클릭시 submit, 쉬프트+엔터 일 시 보내지 않음
-  const onKeyDownChat = useCallback((e) => {
-    if (e.key === 'Enter') {
-      if (!e.shiftKey) {
-        e.preventDefault();
-        onSubmitForm(e);
+  const onKeyDownChat = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        if (!e.shiftKey) {
+          e.preventDefault();
+          onSubmitForm(e);
+        }
       }
-    }
-  }, []);
+    },
+    [onSubmitForm],
+  );
   return (
     <ChatArea>
       <Form onSubmit={onSubmitForm}>

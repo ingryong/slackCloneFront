@@ -10,7 +10,7 @@ const Channel = () => {
   // 작성된 내용 submit
   const onSubmitForm = useCallback((e) => {
     e.preventDefault();
-    console.log('submit');
+    console.log(chat?.trim());
     setChat('');
   }, []);
 

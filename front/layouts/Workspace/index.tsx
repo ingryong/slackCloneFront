@@ -1,7 +1,7 @@
 import { IChannel, IUser } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
-import React, { useCallback, useState, VFC } from 'react';
+import React, { useCallback, useEffect, useState, VFC } from 'react';
 import { Redirect, Route, Switch, useParams } from 'react-router';
 import useSWR from 'swr';
 import {
@@ -50,7 +50,9 @@ const Workspace: VFC = () => {
 
   const { workspace } = useParams<{ workspace: string }>();
   // 유저 데이터
-  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher);
+  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher, {
+    dedupingInterval: 2000, // 2초
+  });
   // 채널 데이터
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
