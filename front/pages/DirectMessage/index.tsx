@@ -27,10 +27,10 @@ const DirectMessage = () => {
     (e) => {
       e.preventDefault();
       // chat이 있을 때 채팅을 등록한다.
-      if (chat?.trim()) {
+      if (chat?.trim() && chatData) {
         console.log('chat');
         axios
-          .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
+        .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
             content: chat,
           })
           .then(() => {
@@ -52,7 +52,7 @@ const DirectMessage = () => {
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
-      <ChatList />
+      <ChatList chatData={chatData} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );

@@ -20,7 +20,7 @@ const DMList = () => {
 
   const [socket] = useSocket(workspace);
   const [channelCollapse, setChannelCollapse] = useState(false);
-  const [onlineList, setOnliseList] = useState<number[]>([]);
+  const [onlineList, setOnlineList] = useState<number[]>([]);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -28,20 +28,20 @@ const DMList = () => {
 
   useEffect(() => {
     console.log('DMlist: workspace 변경', workspace);
-    setOnliseList([]);
+    setOnlineList([]);
   }, [workspace]);
 
   // 온라인시 불들어옴
-    useEffect(() => {
-      socket?.on('onlineList', (data: number[]) => {
-        setOnliseList(data);
-      });
-      console.log('socket on dm', socket?.hasListeners('dm'), socket);
-      return () => {
-        console.log('socket off dm', socket?.hasListeners('dm'));
-        socket?.off('onlineList');
-      };
-    }, [socket]);
+  useEffect(() => {
+    socket?.on('onlineList', (data: number[]) => {
+      setOnlineList(data);
+    });
+    console.log('socket on dm', socket?.hasListeners('dm'), socket);
+    return () => {
+      console.log('socket off dm', socket?.hasListeners('dm'));
+      socket?.off('onlineList');
+    };
+  }, [socket]);
 
   return (
     <>

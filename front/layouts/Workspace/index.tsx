@@ -58,18 +58,18 @@ const Workspace: VFC = () => {
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
   // 멤버 데이터
-  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+ //  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   const[socket, disconnect] = useSocket();
 
   // 연결될 때
   useEffect(()=>{
-    if(channelData && userData&&socket){
+    if(channelData && userData && socket){
       socket.emit('login',{id:userData.id, channels:channelData.map((v)=>v.id)})
     }
   },[socket, channelData, userData])
 
-  // 연결 끊을 때
+  // socket 연결 끊어주기. workspace가 바뀌면 기존 workspace 정리
   useEffect(()=>{
     return () =>{
       disconnect();
@@ -91,7 +91,6 @@ const Workspace: VFC = () => {
 
   /** 상단바 프로필이미지 토글메뉴 버튼 */
   const onClickUserProfile = useCallback(() => {
-    console.log('click');
     setShowUserMenu((prev) => !prev);
   }, []);
 
@@ -218,7 +217,7 @@ const Workspace: VFC = () => {
             <ChannelList />
             <DMList />
           </MenuScroll>
-          <AddButton>addButton</AddButton>
+          <AddButton></AddButton>
         </Channels>
         {/** 채팅 섹션 */}
         <Chats>
