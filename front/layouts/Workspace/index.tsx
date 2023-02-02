@@ -58,9 +58,10 @@ const Workspace: VFC = () => {
   const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
 
   // 멤버 데이터
- //  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
-
-  const[socket, disconnect] = useSocket();
+ const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  
+ // 소켓 연결
+  const[socket, disconnect] = useSocket(workspace);
 
   // 연결될 때
   useEffect(()=>{
