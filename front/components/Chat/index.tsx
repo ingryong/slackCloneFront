@@ -1,21 +1,23 @@
-import { IChat, IDM } from "@typings/db";
-import { userInfo } from "os";
+import { IDM } from "@typings/db";
 import React, { VFC } from "react";
 import { ChatWrapper } from "./styles";
 import gravatar from 'gravatar'
 import { useParams } from "react-router";
 
 interface Props {
-    data: IDM | IChat;
+    data: IDM;
   }
 
   const BACK_URL = process.env.NODE_ENV === 'development' ? 'http://localhost:3095' : 'https://sleact.nodebird.com';
+
+  /** 채팅 하나하나 불러오기 */
   const Chat: VFC<Props> = ({ data }) => {
     const { workspace } = useParams<{ workspace: string; channel: string }>();
-    const user = 'Sender' in data ? data.Sender : data.User;
+    const user = data.Sender;
     
     return (
     <ChatWrapper>
+      여기가 채팅 불러오는 곳
       <div className="chat-img">
         <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
       </div>
