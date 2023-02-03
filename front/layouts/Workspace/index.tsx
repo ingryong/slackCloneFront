@@ -51,7 +51,7 @@ const Workspace: VFC = () => {
 
   const { workspace } = useParams<{ workspace: string }>();
   // 유저 데이터
-  const { data: userData, mutate: revalidateUser } = useSWR<IUser | false>('/api/users', fetcher, {
+  const { data: userData, mutate } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000, // 2초
   });
   // 채널 데이터
@@ -63,7 +63,7 @@ const Workspace: VFC = () => {
  // 소켓 연결
   const[socket, disconnect] = useSocket(workspace);
 
-  // 연결될 때
+  // 로그인되서 연결될 때
   useEffect(()=>{
     if(channelData && userData && socket){
       socket.emit('login',{id:userData.id, channels:channelData.map((v)=>v.id)})
@@ -80,14 +80,12 @@ const Workspace: VFC = () => {
   /** 로그아웃 이벤트 */
   const onLogOut = useCallback(() => {
     axios
-      .post('/api/users/logout')
-      .then(() => {
-        revalidateUser();
+      .post('/api/users/logout', null, {
+        withCredentials:  true,
       })
-      .catch((error) => {
-        console.dir(error);
-        toast.error(error.response?.data, { position: 'bottom-center' });
-      });
+      .then(() => {
+        mutate(false, false);
+      })
   }, []);
 
   /** 상단바 프로필이미지 토글메뉴 버튼 */
@@ -125,7 +123,7 @@ const Workspace: VFC = () => {
           },
         )
         .then(() => {
-          revalidateUser();
+          mutate();
           setShowCreateWorkspaceModal(false);
           setNewWorkspace('');
           setNewUrl('');
@@ -156,7 +154,7 @@ const Workspace: VFC = () => {
     setShowCreateChannelModal(true);
   }, []);
 
-  /** 워크스페이스 토글 - 채널 초대하기 */
+  /** 워크스페이스 토글 - 워크스페이스에 사용자 초대하기 */
   const onClickInviteWorkspace = useCallback(() => {
     setShowInviteWorkspaceModal(true);
   }, []);

@@ -33,11 +33,19 @@ const LogIn = () => {
     [email, password, mutate],
   );
 
-  console.log(error, userData);
-  if (!error && userData) {
-    console.log('로그인됨', userData);
+  if (userData === undefined) {
+    return <div>로딩중...</div>;
+  }
+
+  if (userData) {
     return <Redirect to="/workspace/sleact/channel/일반" />;
   }
+
+  // console.log(error, userData);
+  // if (!error && userData) {
+  //   console.log('로그인됨', userData);
+  //   return <Redirect to="/workspace/sleact/channel/일반" />;
+  // }
 
   return (
     <div id="container">
