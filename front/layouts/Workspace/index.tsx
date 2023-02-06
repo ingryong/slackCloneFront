@@ -65,10 +65,11 @@ const Workspace: VFC = () => {
 
   // 로그인되서 연결될 때
   useEffect(()=>{
+    console.log(socket)
     if(channelData && userData && socket){
-      socket.emit('login',{id:userData.id, channels:channelData.map((v)=>v.id)})
+      socket.emit('login',{id:userData.id, channels:channelData.map((v)=>v.id)});
     }
-  },[socket, channelData, userData])
+  },[socket, channelData, userData]);
 
   // socket 연결 끊어주기. workspace가 바뀌면 기존 workspace 정리
   useEffect(()=>{
@@ -86,7 +87,7 @@ const Workspace: VFC = () => {
       .then(() => {
         mutate(false, false);
       })
-  }, []);
+  }, [mutate]);
 
   /** 상단바 프로필이미지 토글메뉴 버튼 */
   const onClickUserProfile = useCallback(() => {
@@ -256,12 +257,12 @@ const Workspace: VFC = () => {
         setShowInviteWorkspaceModal={setShowInviteWorkspaceModal}
       />
 
-      {/** 채널 멤버 초대 모달 */}
+      {/* * 채널 멤버 초대 모달
       <InviteChannelModal
         show={showInviteChannelModal}
         onCloseModal={onCloseModal}
         setShowInviteChannelModal={setShowInviteChannelModal}
-      />
+      /> */}
     </div>
   );
 };

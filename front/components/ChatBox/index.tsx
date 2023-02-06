@@ -10,7 +10,9 @@ interface Props {
 }
 
 const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) => {
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
   // 텍스트가 길어지면 자동으로 높이가 늘어남
   useEffect(() => {
     if (textareaRef.current) {
@@ -50,7 +52,7 @@ const ChatBox: VFC<Props> = ({ chat, onSubmitForm, onChangeChat, placeholder }) 
           /> */}
         </MentionsTextarea>
         <Toolbox>
-          <SendButton
+        <SendButton
             className={
               'c-button-unstyled c-icon_button c-icon_button--light c-icon_button--size_medium c-texty_input__button c-texty_input__button--send' +
               (chat?.trim() ? '' : ' c-texty_input__button--disabled')

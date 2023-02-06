@@ -28,7 +28,7 @@ const DirectMessage = () => {
       e.preventDefault();
       // chat이 있을 때 채팅을 등록한다.
       if (chat?.trim() && chatData) {
-        console.log('chat');
+        console.log(chat);
         axios
         .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
             content: chat,

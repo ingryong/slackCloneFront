@@ -18,6 +18,7 @@ const useSocket = (workspace?: string): [SocketIOClient.Socket | undefined, () =
     return [undefined, disconnect];
   }
   if (!sockets[workspace]) {
+    // 워크스페이스로 소켓 연결
     sockets[workspace] = io.connect(`${backUrl}/ws-${workspace}`, {
       transports: ['websocket'],
     });
