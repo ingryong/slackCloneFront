@@ -24,11 +24,13 @@ const DMList: FC = () => {
     setChannelCollapse((prev) => !prev);
   }, []);
 
+  // 워크스페이스 이동할 때 온라인 리스트 리셋
   useEffect(() => {
-    console.log('DMList: workspace 바꼈다', workspace);
+    console.log('DMList: workspace 이동완료', workspace);
     setOnlineList([]);
   }, [workspace]);
 
+  // 멤버 중 온라인인 상태일 경우 녹색불로 바뀜
   useEffect(() => {
     socket?.on('onlineList', (data: number[]) => {
       setOnlineList(data);

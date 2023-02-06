@@ -17,7 +17,6 @@ interface Props {
     
     return (
     <ChatWrapper>
-      여기가 채팅 불러오는 곳
       <div className="chat-img">
         <img src={gravatar.url(user.email, { s: '36px', d: 'retro' })} alt={user.nickname} />
       </div>
@@ -30,6 +29,6 @@ interface Props {
       </div>
     </ChatWrapper>
   );
-}
+};
 
 export default Chat;
