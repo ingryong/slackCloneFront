@@ -11,6 +11,8 @@ interface Props {
 /** Chat에서 가져온 채팅을 뿌려줌 */
 const ChatList: VFC<Props> = ({chatData}) => {
   const scrollbarRef = useRef(null);
+
+  // 채팅 리스트 위로 올릴 때 과거 채팅들 가져올 수 있게
   const onScroll = useCallback(()=>{},[])
   
   return (

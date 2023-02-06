@@ -1,4 +1,3 @@
-import { Container, Header } from '@pages/Channel/styles';
 import React, { useCallback } from 'react';
 import gravatar from 'gravatar';
 import useSWR from 'swr';
@@ -9,6 +8,7 @@ import ChatList from '@components/ChatList';
 import useInput from '@hooks/useInput';
 import axios from 'axios';
 import { IDM } from '@typings/db';
+import { Container, Header } from './styles';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
