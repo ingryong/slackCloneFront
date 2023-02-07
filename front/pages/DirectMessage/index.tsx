@@ -17,7 +17,7 @@ const DirectMessage = () => {
   const [chat, onChangeChat, setChat] = useInput('');
 
   // 등록된 채팅 받아오기
-  const { data: chatData, mutate: mutateChat } = useSWR<IDM[]>(
+  const { data: chatData, mutate } = useSWR<IDM[]>(
     `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=1`,
     fetcher,
   );
@@ -34,13 +34,13 @@ const DirectMessage = () => {
             content: chat,
           })
           .then(() => {
-            mutateChat;
+            mutate();
             setChat('');
           })
           .catch(console.error);
       }
     },
-    [chat],
+    [chat, chatData],
   );
 
   if (!userData || !myData) {
