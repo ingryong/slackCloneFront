@@ -217,7 +217,6 @@ const Workspace: VFC = () => {
             <ChannelList />
             <DMList />
           </MenuScroll>
-          <AddButton></AddButton>
         </Channels>
         {/** 채팅 섹션 */}
         <Chats>

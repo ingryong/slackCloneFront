@@ -88,3 +88,6 @@
 
 ### react-mentions
 - 디스코드나 슬랙에서 '@username'같은 맨션을 사용할 수 있는 라이브러리
+
+### regexify-string
+- 정규표현식 라이브러리
