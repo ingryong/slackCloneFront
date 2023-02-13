@@ -9,6 +9,7 @@ import useInput from '@hooks/useInput';
 import axios from 'axios';
 import { IDM } from '@typings/db';
 import { Container, Header } from './styles';
+import makeSection from '@utils/makeSection';
 
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
@@ -46,13 +47,17 @@ const DirectMessage = () => {
   if (!userData || !myData) {
     return null;
   }
+
+  // 날짜별 묶음 적용
+  const chatSectoins = makeSection(chatData ? [...chatData].reverse() : []);
+
   return (
     <Container>
       <Header>
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
-      <ChatList chatData={chatData} />
+      <ChatList chatSectoins={chatSectoins} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
