@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import gravatar from 'gravatar';
 import useSWR from 'swr';
 import useSWRInfinite from 'swr/infinite';
@@ -22,7 +22,7 @@ const DirectMessage = () => {
   // 등록된 채팅 받아오기
   const {
     data: chatData,
-    mutate,
+    mutate: mutateChat,
     setSize,
   } = useSWRInfinite<IDM[]>(
     (index) => `/api/workspaces/${workspace}/dms/${id}/chats?perPage=20&page=${index + 1}`,
@@ -40,21 +40,48 @@ const DirectMessage = () => {
     (e) => {
       e.preventDefault();
       // chat이 있을 때 채팅을 등록한다.
+      console.log(chat);
+
+      // 옵티미스틱 UI
+      // 서버와 통신을 보내기 전에 미리 UI상 보낸 것으로 보이게 하여 사용자에게 지연시간이 없어보이게 한다.
       if (chat?.trim() && chatData) {
-        console.log(chat);
+        const savedChat = chat;
+        mutateChat((prevChatData) => {
+          prevChatData?.[0].unshift({
+            id: (chatData[0][0]?.id || 0) + 1,
+            content: savedChat,
+            SenderId: myData.id,
+            Sender: myData,
+            ReceiverId: userData.id,
+            Receiver: userData,
+            createdAt: new Date(),
+          });
+          return prevChatData;
+        }, false).then(() => {
+          setChat('');
+          // 채팅 치면 아래로 내려가게
+          scrollbarRef.current?.scrollToBottom();
+        });
         axios
           .post(`/api/workspaces/${workspace}/dms/${id}/chats`, {
             content: chat,
           })
           .then(() => {
-            mutate();
+            mutateChat();
             setChat('');
           })
           .catch(console.error);
       }
     },
-    [chat, chatData],
+    [chat, chatData, myData, userData, workspace, id],
   );
+
+  // 로딩 시 스크롤바 제일 아래로
+  useEffect(() => {
+    if (chatData?.length === 1) {
+      scrollbarRef.current?.scrollToBottom();
+    }
+  }, [chatData]);
 
   if (!userData || !myData) {
     return null;
@@ -69,13 +96,7 @@ const DirectMessage = () => {
         <img src={gravatar.url(userData.email, { s: '24px', d: 'retro' })} alt={userData.nickname} />
         <span>{userData.nickname}</span>
       </Header>
-      <ChatList
-        chatSectoins={chatSectoins}
-        ref={scrollbarRef}
-        setSize={setSize}
-        isEmpty={isEmpty}
-        isReachingEnd={isReachingEnd}
-      />
+      <ChatList chatSectoins={chatSectoins} ref={scrollbarRef} setSize={setSize} isReachingEnd={isReachingEnd} />
       <ChatBox chat={chat} onChangeChat={onChangeChat} onSubmitForm={onSubmitForm} />
     </Container>
   );
