@@ -14,6 +14,7 @@ import makeSection from '@utils/makeSection';
 import Scrollbars from 'react-custom-scrollbars';
 import useSocket from '@hooks/useSocket';
 
+/** DM 채팅 */
 const DirectMessage = () => {
   const { workspace, id } = useParams<{ workspace: string; id: string }>();
   const { data: userData } = useSWR(`/api/workspaces/${workspace}/users/${id}`, fetcher);
