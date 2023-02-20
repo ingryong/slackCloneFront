@@ -126,6 +126,11 @@ const Channel = () => {
     }
   }, [chatData]);
 
+  // 채널 페이지 접근 시의 시간을 기록함
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${channel}`, new Date().getTime().toString());
+  }, [workspace, channel]);
+
   // 채널 우측상단 - 채널 초대 이벤트
   const onClickInviteChannel = useCallback(() => {
     setShowInviteChannelModal(true);
@@ -185,7 +190,7 @@ const Channel = () => {
     <Container onDrop={onDrop} onDragOver={onDragOver}>
       <Header>
         <span>#{channel}</span>
-        <div className="header-right">
+        <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
           <span>{channelMembersData?.length}</span>
           <button
             onClick={onClickInviteChannel}

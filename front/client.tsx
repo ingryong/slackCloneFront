@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
 import App from '@layouts/App';
+import SWRDevtools from '@jjordy/swr-devtools';
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL =
@@ -13,7 +14,15 @@ axios.defaults.baseURL =
 
 render(
   <BrowserRouter>
-    <App />
+    <>
+      {process.env.NODE_ENV === 'production' ? (
+        <App />
+      ) : (
+        <SWRDevtools>
+          <App />
+        </SWRDevtools>
+      )}
+    </>
   </BrowserRouter>,
   document.querySelector('#app'),
 );

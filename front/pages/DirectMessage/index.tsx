@@ -121,6 +121,11 @@ const DirectMessage = () => {
     }
   }, [chatData]);
 
+  // DM페이지 접근 시의 시간을 기록함
+  useEffect(() => {
+    localStorage.setItem(`${workspace}-${id}`, new Date().getTime().toString());
+  }, [workspace, id]);
+
   // 이미지 드래그 드롭 업로드
   const onDrop = useCallback(
     (e) => {
